@@ -119,6 +119,29 @@ graph TD
     style Views fill:#f8fafc,stroke:#475569,stroke-width:1px
 ```
 
+### 🧠 Diagram Breakdown
+
+**1. User Interaction**
+*   **User**: The real person interacting with the platform.
+*   **Browser Client**: The web browser loads the compiled React application.
+
+**2. Frontend Core**
+*   **React Router**: Acts as the "traffic controller," directing the user to the correct page (Home, Dashboard, etc.) based on the URL.
+*   **Main Layout**: A persistent wrapper containing the global **Navbar** and the active view.
+
+**3. Application Views**
+The router manages five main views:
+*   **Home**: Landing page.
+*   **Dashboard**: Analytics visualizations.
+*   **Explore**: Searchable event list.
+*   **Details**: Individual event pages.
+*   **Create Wizard**: The tool for organizers.
+
+**4. External Integration (AI)**
+*   **Gemini Service**: The bridge between the app and the AI.
+*   **Google Gemini API**: Generates creative content (agendas, descriptions).
+*   **Mock Generator**: A safety fallback that ensures the app works even without an API key.
+
 ---
 
 ## 📂 Project Structure
