@@ -1,6 +1,6 @@
 # EventHorizon
 
-![EventHorizon Banner](/Users/priyankasudhakarreddy/.gemini/antigravity/brain/f2dc93cc-9154-4cb1-b8b1-10667dc8e3fc/event_horizon_banner_1765947538179.png)
+![EventHorizon Banner](public/event_horizon_banner.png)
 
 <div align="center">
 
@@ -15,6 +15,20 @@
 [View Demo](#) · [Report Bug](#) · [Request Feature](#)
 
 </div>
+
+<details>
+<summary>Table of Contents</summary>
+
+- [Overview](#-overview)
+- [Key Differentiators](#-key-differentiators)
+- [Quick Start](#-quick-start)
+- [Architecture System](#️-architecture-system)
+- [Project Structure](#-project-structure)
+- [Design System](#-design-system)
+- [Contributing](#-contributing)
+- [License](#-license)
+
+</details>
 
 ---
 
