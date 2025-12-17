@@ -10,16 +10,17 @@ export const INITIAL_EVENTS: Event[] = [
     shortDescription: 'Join industry leaders for a 3-day summit on AI, Cloud Computing, and the future of software.',
     imageUrl: 'https://picsum.photos/seed/techsummit/800/400',
     ticketTypes: [
-        { id: 't1', name: 'Early Bird', price: 199, capacity: 100, sold: 100 },
-        { id: 't2', name: 'General Admission', price: 299, capacity: 300, sold: 150 },
-        { id: 't3', name: 'VIP', price: 599, capacity: 50, sold: 20 }
+      { id: 't1', name: 'Early Bird', price: 199, capacity: 100, sold: 100 },
+      { id: 't2', name: 'General Admission', price: 299, capacity: 300, sold: 150 },
+      { id: 't3', name: 'VIP', price: 599, capacity: 50, sold: 20 }
     ],
     status: EventStatus.PUBLISHED,
     tags: ['Tech', 'AI', 'Networking'],
     agenda: [
       { id: 'a1', time: '09:00 AM', title: 'Keynote Speech', speaker: 'Jane Doe', description: 'Opening remarks on the future of AI.' },
       { id: 'a2', time: '11:00 AM', title: 'Cloud Architectures', speaker: 'John Smith', description: 'Scaling systems in 2025.' }
-    ]
+    ],
+    registeredCount: 270
   },
   {
     id: '2',
@@ -30,13 +31,14 @@ export const INITIAL_EVENTS: Event[] = [
     shortDescription: 'Discover green technology and sustainable living at this family-friendly expo.',
     imageUrl: 'https://picsum.photos/seed/green/800/400',
     ticketTypes: [
-        { id: 't4', name: 'General Entry', price: 25, capacity: 200, sold: 45 }
+      { id: 't4', name: 'General Entry', price: 25, capacity: 200, sold: 45 }
     ],
     status: EventStatus.PUBLISHED,
     tags: ['Sustainability', 'Green', 'Lifestyle'],
     agenda: [
       { id: 'b1', time: '10:00 AM', title: 'Solar Basics', speaker: 'Green Energy Co.', description: 'Intro to home solar.' }
-    ]
+    ],
+    registeredCount: 45
   },
   {
     id: '3',
@@ -47,11 +49,12 @@ export const INITIAL_EVENTS: Event[] = [
     shortDescription: 'Network and brainstorm with top marketing executives in a tropical paradise.',
     imageUrl: 'https://picsum.photos/seed/bali/800/400',
     ticketTypes: [
-        { id: 't5', name: 'All Access Retreat', price: 1500, capacity: 50, sold: 50 }
+      { id: 't5', name: 'All Access Retreat', price: 1500, capacity: 50, sold: 50 }
     ],
     status: EventStatus.COMPLETED,
     tags: ['Business', 'Marketing', 'Travel'],
-    agenda: []
+    agenda: [],
+    registeredCount: 50
   }
 ];
 

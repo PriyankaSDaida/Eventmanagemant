@@ -1,43 +1,114 @@
 # EventHorizon - Event Management Platform
 
-EventHorizon is a modern, comprehensive event management web application built with React, TypeScript, and Tailwind CSS. It leverages Google's Gemini AI for content generation and provides a seamless experience for both event organizers and attendees.
+EventHorizon is a modern, comprehensive event management web application built with React, TypeScript, and Tailwind CSS. It leverages Google's Gemini AI for smart content generation and features a "Vibrant Professional" light theme designed for clarity and engagement.
 
 ## 🚀 Features
 
 ### Public-Facing
-*   **Modern Homepage**: Engaging landing page with hero section, featured events, categories, and testimonials.
-*   **Event Discovery**: Advanced search and filtering capabilities (by category, date, price, location).
-*   **Responsive Design**: Fully optimized for mobile, tablet, and desktop devices.
+*   **Modern Homepage**: Engaging landing page with a hero section, featured categories, and trusted partner showcase.
+*   **Event Discovery**: "Explore Events" page with a floating glass search bar and advanced filtering (category, price, date).
+*   **Responsive Design**: Fully optimized for mobile, tablet, and desktop devices with smooth animations.
 
 ### For Attendees
-*   **Event Details**: Rich event pages with agendas, speaker profiles, and location info.
-*   **Ticketing System**: Seamless ticket selection with real-time availability tracking.
-*   **User Dashboard**: Track upcoming events and booking history.
+*   **Event Details**: Immersive event pages featuring a gradient-overlay hero section, detailed agenda, and speaker profiles.
+*   **Ticketing System**: Interactive ticket selection cards with real-time status (Sold Out / Limited Availability).
+*   **Smart Dashboard**: Personal dashboard to track registered events and upcoming schedules.
 
 ### For Organizers
-*   **AI-Powered Creation**: Integrated **Google Gemini AI** to automatically generate marketing descriptions, agendas, and tags based on simple notes.
-*   **Dashboard Analytics**: Real-time visualizations of revenue, attendee counts, and registration trends using Recharts.
-*   **Event Management**: Create, edit, and manage event details and ticket types.
+*   **AI-Powered Creation**: Integrated **Google Gemini AI** (Model: `gemini-2.5-flash`) to automatically generate:
+    *   Compelling marketing descriptions.
+    *   Structured agendas with time slots and activities.
+    *   Relevant category tags.
+    *   *All from simple context notes.*
+*   **Analytics Dashboard**: Visualizations of revenue, attendee engagement, and ticket sales using Recharts.
+*   **Event Management**: Intuitive wizard for creating and publishing events.
 
 ## 🛠️ Technology Stack
 
-*   **Frontend Framework**: React 18 with TypeScript
-*   **Styling**: Tailwind CSS with a custom design system (Indigo & Pink theme)
+*   **Frontend**: React 18, TypeScript, Vite
+*   **Styling**: Tailwind CSS
+    *   *Theme*: "Vibrant Professional" (Light Mode)
+    *   *System*: Glassmorphism, Mesh Gradients, Slate-50 Background
 *   **Icons**: Lucide React
 *   **Charts**: Recharts
-*   **AI Integration**: Google GenAI SDK (Gemini 2.5 Flash)
-*   **Build Tool**: Vite (assumed environment)
+*   **AI Integration**: Google GenAI SDK (`@google/genai`)
+
+## 🎨 Design System
+
+The application features a polished "Vibrant Professional" light theme:
+
+| Role | Color | Hex | Use Case |
+|------|-------|-----|----------|
+| **Background** | Slate 50 | `#f8fafc` | Main application background |
+| **Primary** | Indigo 600 | `#4f46e5` | Key actions, brand identity, trustworthiness |
+| **Secondary** | Pink 600 | `#db2777` | Creative accents, highlights, excitement |
+| **Accent** | Teal 600 | `#0d9488` | Success states, freshness, status indicators |
+
+*   **Glassmorphism**: A "Light Frost" effect (`bg-white/70`, `backdrop-blur-xl`) used on cards and navigation for a modern, airy feel.
+*   **Typography**: `Inter` for clean legibility and `Outfit` for modern, bold headings.
 
 ## 📂 Project Structure
 
 ```
 /
-├── components/        # Reusable UI components (Navbar, EventCard, Footer, etc.)
-├── services/          # API integrations (Gemini AI, Mock Auth, Data persistence)
-├── views/             # Page components (Home, Dashboard, EventDetails, etc.)
+├── components/        # Reusable UI components (Navbar, EventCard, Layout, etc.)
+├── services/          # API integrations (Gemini AI, Mock Auth, Storage)
+├── views/             # Page components
+│   ├── Dashboard.tsx    # Analytics & Stats
+│   ├── CreateEvent.tsx  # Event Wizard with AI
+│   ├── EventDetails.tsx # Public event view
+│   ├── EventsList.tsx   # Search & Discovery
+│   └── ...
 ├── types.ts           # TypeScript definitions
-├── App.tsx            # Main application logic and routing
-└── index.html         # Entry point with Tailwind configuration
+├── App.tsx            # Main routing and state management
+└── index.html         # Entry point & Global CSS Variables
+```
+
+## 🏗️ Architecture
+
+```mermaid
+graph TD
+    User([User]) -->|Interacts| Client[Browser]
+    Client -->|Loads| App[React Application]
+
+    subgraph "Frontend Architecture"
+        App -->|Routing| Router[React Router]
+        Router -->|Renders| Layout[Main Layout]
+        
+        Layout -->|Contains| Navbar
+        Layout -->|Contains| Views
+        
+        subgraph "Views"
+            Views --> Home
+            Views --> Dashboard
+            Views --> EventsList[Explore Events]
+            Views --> EventDetails
+            Views --> CreateEvent[Create Wizard]
+        end
+        
+        subgraph "Components"
+            Home --> EventCard
+            EventsList --> EventCard
+            Dashboard --> Recharts[Charts & Stats]
+        end
+        
+        CreateEvent -->|Uses| GeminiService
+        EventsList -->|Reads| MockData[Data Store]
+        Dashboard -->|Reads| MockData
+    end
+
+    subgraph "External Services"
+        GeminiService -->|API Call| GoogleAI[Google Gemini API]
+        GeminiService -.->|Fallback| MockGen[Mock Generator]
+    end
+    
+    classDef primary fill:#4f46e5,stroke:#333,stroke-width:2px,color:white;
+    classDef secondary fill:#db2777,stroke:#333,stroke-width:2px,color:white;
+    classDef external fill:#0f172a,stroke:#333,stroke-width:2px,color:white;
+    
+    class App,Router,Layout primary;
+    class CreateEvent,Dashboard,EventDetails secondary;
+    class GoogleAI external;
 ```
 
 ## ⚙️ Setup & Installation
@@ -58,6 +129,7 @@ EventHorizon is a modern, comprehensive event management web application built w
     ```env
     API_KEY=your_google_gemini_api_key_here
     ```
+    *Note: If no API key is provided, the app will seamlessly fallback to using high-quality mock data for demonstrations.*
 
 4.  **Run the development server**
     ```bash
@@ -66,16 +138,8 @@ EventHorizon is a modern, comprehensive event management web application built w
 
 ## 🤖 AI Features
 
-The application uses the `@google/genai` SDK to enhance event creation.
-*   **Model**: `gemini-2.5-flash`
-*   **Functionality**: When creating an event, users can input basic notes, and the AI generates a professional description, a structured agenda with times and speakers, and relevant categorization tags.
-
-## 🎨 Design System
-
-The project uses a custom Tailwind configuration:
-*   **Primary Color**: Indigo (`#6366f1`)
-*   **Secondary Color**: Pink (`#ec4899`)
-*   **Typography**: `Inter` for body text, `Poppins` for headings.
+The application uses the **Gemini 2.5 Flash** model via the `@google/genai` SDK.
+*   **Smart Fallback**: The `geminiService.ts` includes a robust mock generator that produces context-aware content (Tech vs. Music vs. General) if the API is unreachable, ensuring the demo never breaks.
 
 ## 📄 License
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Search, Calendar, ArrowRight, Users, Award, Zap, Music, Briefcase, Coffee, Activity } from 'lucide-react';
+import { Search, Calendar, ArrowRight, Users, Award, Zap, Music, Briefcase, Coffee, Activity, Sparkles } from 'lucide-react';
 import { Event } from '../types';
 import { EventCard } from '../components/EventCard';
 
@@ -11,207 +11,129 @@ interface HomeProps {
 
 export const Home: React.FC<HomeProps> = ({ featuredEvents, onNavigateEvents, onEventClick }) => {
   const categories = [
-    { name: 'Technology', icon: Zap, color: 'bg-blue-100 text-blue-600' },
-    { name: 'Music', icon: Music, color: 'bg-pink-100 text-pink-600' },
-    { name: 'Business', icon: Briefcase, color: 'bg-purple-100 text-purple-600' },
-    { name: 'Lifestyle', icon: Coffee, color: 'bg-orange-100 text-orange-600' },
-    { name: 'Health', icon: Activity, color: 'bg-green-100 text-green-600' },
-  ];
-
-  const stats = [
-    { value: '10K+', label: 'Events Hosted', icon: Calendar },
-    { value: '2M+', label: 'Happy Attendees', icon: Users },
-    { value: '99%', label: 'Satisfaction Rate', icon: Award },
-  ];
-
-  const testimonials = [
-    {
-      text: "EventHorizon completely transformed how we manage our tech conferences. The AI features are a game changer!",
-      author: "Sarah Johnson",
-      role: "Event Director, TechFlow",
-      avatar: "https://picsum.photos/seed/sarah/100/100"
-    },
-    {
-      text: "The booking process is seamless. I love how easy it is to find and register for events in my city.",
-      author: "Michael Chen",
-      role: "Attendee",
-      avatar: "https://picsum.photos/seed/michael/100/100"
-    },
-    {
-      text: "As a venue owner, this platform gives me the visibility and tools I need to fill my calendar.",
-      author: "Jessica Williams",
-      role: "Venue Manager",
-      avatar: "https://picsum.photos/seed/jessica/100/100"
-    }
+    { name: 'Tech & AI', icon: Zap, color: 'text-amber-500', bg: 'bg-amber-100' },
+    { name: 'Music & Arts', icon: Music, color: 'text-pink-500', bg: 'bg-pink-100' },
+    { name: 'Business', icon: Briefcase, color: 'text-blue-500', bg: 'bg-blue-100' },
+    { name: 'Social', icon: Coffee, color: 'text-emerald-500', bg: 'bg-emerald-100' },
   ];
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="pb-20">
       {/* Hero Section */}
-      <section className="relative bg-gray-900 overflow-hidden">
-        <div className="absolute inset-0 opacity-20">
-            <div className="absolute inset-0 bg-gradient-to-r from-primary-900 to-secondary-900 mix-blend-multiply" />
-            <img 
-                src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80" 
-                alt="Event Crowd" 
-                className="w-full h-full object-cover"
-            />
+      <section className="relative px-6 py-24 md:py-32 max-w-7xl mx-auto flex flex-col items-center text-center animate-fade-in">
+        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass mb-8 border-primary-200">
+          <span className="relative flex h-3 w-3">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-3 w-3 bg-primary-500"></span>
+          </span>
+          <span className="text-primary-700 font-medium text-sm">The Future of Event Management</span>
         </div>
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-24 sm:pt-32 sm:pb-32">
-          <div className="text-center max-w-3xl mx-auto">
-            <h1 className="text-4xl sm:text-6xl font-bold font-heading text-white tracking-tight mb-6">
-              Experience Events <br/>
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-400 to-secondary-400">Like Never Before</span>
-            </h1>
-            <p className="text-xl text-gray-300 mb-10">
-              Discover, book, and organize unforgettable experiences. From intimate workshops to massive global conferences.
-            </p>
-            
-            <div className="max-w-2xl mx-auto bg-white p-2 rounded-full shadow-xl flex items-center">
-              <div className="pl-4 flex items-center flex-1">
-                <Search className="w-5 h-5 text-gray-400 mr-3" />
-                <input 
-                  type="text" 
-                  placeholder="Search for events, concerts, workshops..." 
-                  className="w-full py-3 outline-none text-gray-700 placeholder-gray-400"
-                />
-              </div>
-              <button 
-                onClick={onNavigateEvents}
-                className="bg-primary-600 hover:bg-primary-700 text-white px-8 py-3 rounded-full font-medium transition-colors flex items-center gap-2"
-              >
-                Explore
-                <ArrowRight className="w-4 h-4" />
-              </button>
+
+        <h1 className="text-5xl md:text-7xl font-bold font-heading mb-6 tracking-tight text-slate-900 leading-tight">
+          Craft <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-secondary-600">Unforgettable</span><br />
+          Experiences
+        </h1>
+
+        <p className="text-slate-600 text-lg md:text-xl max-w-2xl mb-10 leading-relaxed">
+          Platform-agnostic event orchestration for the modern era. Seamlessly plan, manage, and analyze your events with our AI-powered suite.
+        </p>
+
+        <div className="flex flex-col sm:flex-row gap-4 w-full max-w-md">
+          <div className="relative flex-1 group">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <Search className="h-5 w-5 text-slate-400 group-focus-within:text-primary-500 transition-colors" />
             </div>
-            
-            <div className="mt-8 flex justify-center gap-8 text-gray-400 text-sm">
-              <span>Popular:</span>
-              <span className="hover:text-white cursor-pointer underline decoration-dotted">Music Festivals</span>
-              <span className="hover:text-white cursor-pointer underline decoration-dotted">Tech Conferences</span>
-              <span className="hover:text-white cursor-pointer underline decoration-dotted">Yoga Workshops</span>
-            </div>
+            <input
+              type="text"
+              className="block w-full pl-10 pr-3 py-4 rounded-xl glass text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all shadow-sm"
+              placeholder="Find your next event..."
+            />
           </div>
+          <button
+            onClick={onNavigateEvents}
+            className="px-8 py-4 rounded-xl bg-gradient-to-r from-primary-600 to-secondary-600 text-white font-bold shadow-lg shadow-primary-500/30 hover:shadow-primary-500/50 transform hover:-translate-y-1 transition-all flex items-center justify-center gap-2"
+          >
+            Explore <ArrowRight className="h-5 w-5" />
+          </button>
+        </div>
+
+        {/* Metrics */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-20 w-full max-w-4xl">
+          {[
+            { label: 'Active Users', value: '10k+' },
+            { label: 'Events Hosted', value: '2.5k' },
+            { label: 'Countries', value: '120+' },
+            { label: 'Satisfaction', value: '4.9/5' }
+          ].map((stat, i) => (
+            <div key={i} className="flex flex-col items-center">
+              <span className="text-3xl font-bold text-slate-900 mb-1">{stat.value}</span>
+              <span className="text-slate-500 text-sm font-medium">{stat.label}</span>
+            </div>
+          ))}
         </div>
       </section>
 
-      {/* Categories Section */}
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold font-heading text-gray-900 mb-4">Explore by Category</h2>
-            <p className="text-gray-600">Find the events that match your passion</p>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-            {categories.map((cat) => (
-              <div key={cat.name} className="bg-white p-6 rounded-2xl shadow-sm hover:shadow-md transition-all cursor-pointer group border border-gray-100 text-center">
-                <div className={`w-14 h-14 rounded-full ${cat.color} mx-auto flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
-                  <cat.icon className="w-7 h-7" />
-                </div>
-                <h3 className="font-semibold text-gray-900">{cat.name}</h3>
+      {/* Categories */}
+      <section className="px-6 py-10 max-w-7xl mx-auto">
+        <h2 className="text-2xl font-bold text-slate-900 mb-8 flex items-center gap-2">
+          <Activity className="w-6 h-6 text-primary-600" /> Trending Categories
+        </h2>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {categories.map((cat) => (
+            <div key={cat.name} className="glass-card p-6 rounded-2xl flex flex-col items-center justify-center gap-4 cursor-pointer group hover:bg-white">
+              <div className={`p-4 rounded-full ${cat.bg} group-hover:scale-110 transition-transform duration-300`}>
+                <cat.icon className={`h-8 w-8 ${cat.color}`} />
               </div>
-            ))}
-          </div>
+              <h3 className="font-semibold text-slate-800">{cat.name}</h3>
+            </div>
+          ))}
         </div>
       </section>
 
       {/* Featured Events */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-end mb-10">
-            <div>
-              <h2 className="text-3xl font-bold font-heading text-gray-900 mb-4">Featured Events</h2>
-              <p className="text-gray-600">Don't miss out on these trending experiences</p>
-            </div>
-            <button 
-              onClick={onNavigateEvents}
-              className="hidden md:flex items-center text-primary-600 font-semibold hover:text-primary-700 transition-colors"
-            >
-              View all events <ArrowRight className="w-4 h-4 ml-1" />
-            </button>
+      <section className="px-6 py-10 max-w-7xl mx-auto">
+        <div className="flex justify-between items-end mb-8">
+          <div>
+            <h2 className="text-3xl font-bold text-slate-900 mb-2">Featured Events</h2>
+            <p className="text-slate-500">Curated experiences just for you.</p>
           </div>
-          
+          <button onClick={onNavigateEvents} className="text-primary-600 font-semibold hover:text-primary-700 transition-colors flex items-center gap-1">
+            View All <ArrowRight className="w-4 h-4" />
+          </button>
+        </div>
+
+        {featuredEvents.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {featuredEvents.slice(0, 3).map(event => (
-              <EventCard key={event.id} event={event} onClick={onEventClick} />
-            ))}
-          </div>
-          
-          <div className="mt-10 text-center md:hidden">
-             <button 
-                onClick={onNavigateEvents}
-                className="inline-flex items-center text-primary-600 font-semibold hover:text-primary-700 transition-colors"
-             >
-              View all events <ArrowRight className="w-4 h-4 ml-1" />
-            </button>
-          </div>
-        </div>
-      </section>
-
-      {/* Stats Section */}
-      <section className="py-20 bg-primary-900 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-           <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
-             {stats.map((stat, idx) => (
-               <div key={idx} className="space-y-2">
-                 <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mx-auto mb-4 backdrop-blur-sm">
-                    <stat.icon className="w-8 h-8 text-secondary-400" />
-                 </div>
-                 <div className="text-4xl font-bold font-heading">{stat.value}</div>
-                 <div className="text-primary-200">{stat.label}</div>
-               </div>
-             ))}
-           </div>
-        </div>
-      </section>
-
-      {/* Testimonials */}
-      <section className="py-20 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold font-heading text-gray-900 mb-4">What People Say</h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">Hear from the community of organizers and attendees who trust EventHorizon.</p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {testimonials.map((t, i) => (
-              <div key={i} className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
-                <div className="flex items-center gap-4 mb-6">
-                  <img src={t.avatar} alt={t.author} className="w-12 h-12 rounded-full object-cover" />
-                  <div>
-                    <div className="font-semibold text-gray-900">{t.author}</div>
-                    <div className="text-xs text-gray-500 uppercase tracking-wider">{t.role}</div>
-                  </div>
-                </div>
-                <p className="text-gray-600 italic">"{t.text}"</p>
+            {featuredEvents.slice(0, 3).map((event) => (
+              <div key={event.id} onClick={() => onEventClick(event)}>
+                <EventCard event={event} />
               </div>
             ))}
           </div>
-        </div>
+        ) : (
+          <div className="text-center py-20 glass rounded-3xl border-dashed border-2 border-slate-300">
+            <Calendar className="w-16 h-16 text-slate-300 mx-auto mb-4" />
+            <h3 className="text-xl font-bold text-slate-700">No events found</h3>
+            <p className="text-slate-500">Check back later for upcoming experiences.</p>
+          </div>
+        )}
       </section>
 
-      {/* Newsletter CTA */}
-      <section className="py-20 bg-white">
-        <div className="max-w-4xl mx-auto px-4 text-center">
-           <div className="bg-gradient-to-br from-primary-600 to-secondary-600 rounded-3xl p-10 md:p-16 text-white shadow-2xl relative overflow-hidden">
-             <div className="relative z-10">
-                <h2 className="text-3xl font-bold font-heading mb-4">Never Miss an Event</h2>
-                <p className="text-primary-100 mb-8 max-w-xl mx-auto">Subscribe to our newsletter to get the latest updates on upcoming events, special offers, and exclusive deals.</p>
-                <div className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
-                  <input 
-                    type="email" 
-                    placeholder="Enter your email" 
-                    className="flex-1 px-6 py-3 rounded-full text-gray-900 outline-none focus:ring-2 focus:ring-white/50"
-                  />
-                  <button className="px-8 py-3 bg-gray-900 text-white rounded-full font-semibold hover:bg-gray-800 transition-colors">
-                    Subscribe
-                  </button>
-                </div>
-             </div>
-             {/* Decorative circles */}
-             <div className="absolute -top-24 -left-24 w-48 h-48 bg-white/10 rounded-full blur-3xl"></div>
-             <div className="absolute -bottom-24 -right-24 w-48 h-48 bg-white/10 rounded-full blur-3xl"></div>
-           </div>
+      {/* Newsletter / CTA */}
+      <section className="px-6 py-20 max-w-7xl mx-auto">
+        <div className="glass rounded-3xl p-12 relative overflow-hidden text-center bg-gradient-to-br from-primary-600 to-secondary-600 text-white shadow-2xl shadow-primary-500/30">
+          <div className="relative z-10 max-w-2xl mx-auto">
+            <Sparkles className="w-12 h-12 mx-auto mb-6 text-yellow-300 animate-pulse" />
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 font-heading">Ready to host your next masterpiece?</h2>
+            <p className="text-white/90 text-lg mb-8">Join thousands of organizers creating unforgettable moments with EventHorizon's AI-powered tools.</p>
+            <button className="px-8 py-4 bg-white text-primary-600 font-bold rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all">
+              Get Started for Free
+            </button>
+          </div>
+
+          {/* Decorative circles */}
+          <div className="absolute top-0 left-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
+          <div className="absolute bottom-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl translate-x-1/2 translate-y-1/2"></div>
         </div>
       </section>
     </div>
