@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Sparkles, Calendar, MapPin, Loader2, Save, X, Plus, Trash2 } from 'lucide-react';
-import { CreateEventFormData, Event, EventStatus, AgendaItem, TicketType } from '../types';
+import { Sparkles, Calendar, MapPin, DollarSign, Image as ImageIcon, X, ChevronRight, CheckCircle } from 'lucide-react';
+import { Event, EventStatus, TicketType } from '../types';
 import { generateEventMetadata } from '../services/geminiService';
 
 interface CreateEventProps {
@@ -9,299 +9,299 @@ interface CreateEventProps {
 }
 
 export const CreateEvent: React.FC<CreateEventProps> = ({ onSave, onCancel }) => {
+  const [step, setStep] = useState(1);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [formData, setFormData] = useState<CreateEventFormData>({
+
+  const [formData, setFormData] = useState<Partial<Event>>({
     title: '',
     date: '',
     location: '',
-    notes: ''
+    description: '',
+    shortDescription: '',
+    imageUrl: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&q=80',
+    status: EventStatus.DRAFT,
+    tags: [],
+    agenda: [],
+    ticketTypes: []
   });
-  
-  const [ticketTypes, setTicketTypes] = useState<Omit<TicketType, 'id' | 'sold'>[]>([
-    { name: 'General Admission', price: 0, capacity: 100 }
+
+  const [tickets, setTickets] = useState<TicketType[]>([
+    { id: '1', name: 'General Admission', price: 0, capacity: 100, sold: 0 }
   ]);
 
-  const [generatedContent, setGeneratedContent] = useState<{
-    description: string;
-    tags: string[];
-    agenda: any[];
-  } | null>(null);
+  const updateField = (field: keyof Event, value: any) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
 
   const handleGenerateAI = async () => {
-    if (!formData.title || !formData.date) {
-      alert("Please enter at least a title and date to generate content.");
-      return;
-    }
+    if (!formData.title || !formData.description) return;
 
     setIsGenerating(true);
     try {
-      const content = await generateEventMetadata(
+      const metadata = await generateEventMetadata(
         formData.title,
-        formData.notes,
-        formData.date,
-        formData.location
+        formData.description,
+        formData.date || '',
+        formData.location || ''
       );
-      setGeneratedContent(content);
-    } catch (e) {
-      console.error(e);
-      alert("Failed to generate content. Please check your API key.");
+
+      setFormData(prev => ({
+        ...prev,
+        description: metadata.description,
+        shortDescription: metadata.description.slice(0, 150) + '...',
+        tags: metadata.tags,
+        agenda: metadata.agenda
+      }));
+    } catch (error) {
+      console.error("AI Generation failed", error);
     } finally {
       setIsGenerating(false);
     }
   };
 
-  const addTicketType = () => {
-    setTicketTypes([...ticketTypes, { name: '', price: 0, capacity: 50 }]);
-  };
-
-  const removeTicketType = (index: number) => {
-    if (ticketTypes.length > 1) {
-        const newTypes = [...ticketTypes];
-        newTypes.splice(index, 1);
-        setTicketTypes(newTypes);
-    }
-  };
-
-  const updateTicketType = (index: number, field: keyof typeof ticketTypes[0], value: string | number) => {
-    const newTypes = [...ticketTypes];
-    newTypes[index] = { ...newTypes[index], [field]: value };
-    setTicketTypes(newTypes);
-  };
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
     const newEvent: Event = {
       id: Math.random().toString(36).substr(2, 9),
-      title: formData.title,
-      date: formData.date,
-      location: formData.location,
-      description: generatedContent?.description || formData.notes,
-      imageUrl: `https://picsum.photos/seed/${formData.title.replace(/\s/g, '')}/800/400`,
-      ticketTypes: ticketTypes.map((t, i) => ({
-        id: `ticket-${Date.now()}-${i}`,
-        sold: 0,
-        ...t
-      })),
-      status: EventStatus.PUBLISHED,
-      tags: generatedContent?.tags || ['New'],
-      agenda: generatedContent?.agenda.map((item, idx) => ({
-        id: `agenda-${idx}`,
-        ...item
-      })) as AgendaItem[] || []
+      ...formData as Event,
+      ticketTypes: tickets,
+      organizerId: '1',
+      registeredCount: 0
     };
-
     onSave(newEvent);
   };
 
-  return (
-    <div className="max-w-3xl mx-auto">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Create New Event</h1>
-        <button onClick={onCancel} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-          <X className="w-5 h-5 text-gray-500" />
-        </button>
-      </div>
+  const addTicket = () => {
+    setTickets([...tickets, { id: Math.random().toString(), name: 'VIP', price: 50, capacity: 50, sold: 0 }]);
+  };
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-        {/* AI Header with new design system gradient */}
-        <div className="bg-gradient-to-r from-primary-600 to-secondary-600 p-6 text-white">
-          <div className="flex items-start justify-between">
-            <div>
-              <h2 className="text-lg font-semibold flex items-center gap-2">
-                <Sparkles className="w-5 h-5 text-yellow-300" />
-                AI-Powered Assistant
-              </h2>
-              <p className="text-white/90 text-sm mt-1">
-                Enter basic details and let Gemini generate your marketing copy and agenda.
-              </p>
-            </div>
-          </div>
+  const updateTicket = (id: string, field: keyof TicketType, value: any) => {
+    setTickets(tickets.map(t => t.id === id ? { ...t, [field]: value } : t));
+  };
+
+  const removeTicket = (id: string) => {
+    if (tickets.length > 1) {
+      setTickets(tickets.filter(t => t.id !== id));
+    }
+  };
+
+  return (
+    <div className="max-w-4xl mx-auto pb-20">
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h1 className="text-3xl font-bold font-heading text-slate-900">Host an Event</h1>
+          <p className="text-slate-500">Create something extraordinary.</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">Event Title</label>
-              <input
-                required
-                type="text"
-                className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all"
-                placeholder="e.g. Annual Tech Summit"
-                value={formData.title}
-                onChange={e => setFormData({...formData, title: e.target.value})}
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">Date</label>
-              <div className="relative">
-                <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                <input
-                  required
-                  type="date"
-                  className="w-full pl-10 p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
-                  value={formData.date}
-                  onChange={e => setFormData({...formData, date: e.target.value})}
-                />
-              </div>
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700">Location</label>
-            <div className="relative">
-              <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-              <input
-                required
-                type="text"
-                className="w-full pl-10 p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
-                placeholder="City, Venue, or Online Link"
-                value={formData.location}
-                onChange={e => setFormData({...formData, location: e.target.value})}
-              />
-            </div>
-          </div>
-
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-                <label className="text-sm font-medium text-gray-700">Ticket Types</label>
-                <button type="button" onClick={addTicketType} className="text-sm text-primary-600 hover:text-primary-700 font-medium flex items-center gap-1">
-                    <Plus className="w-3 h-3" /> Add Ticket
-                </button>
-            </div>
-            <div className="space-y-3">
-                {ticketTypes.map((ticket, idx) => (
-                    <div key={idx} className="flex gap-3 items-start bg-gray-50 p-3 rounded-lg border border-gray-200">
-                        <div className="flex-1 space-y-1">
-                            <input
-                                type="text"
-                                placeholder="Ticket Name (e.g. VIP)"
-                                className="w-full p-2 border border-gray-300 rounded text-sm"
-                                value={ticket.name}
-                                onChange={e => updateTicketType(idx, 'name', e.target.value)}
-                                required
-                            />
-                        </div>
-                        <div className="w-24 space-y-1">
-                            <input
-                                type="number"
-                                placeholder="Price"
-                                min="0"
-                                className="w-full p-2 border border-gray-300 rounded text-sm"
-                                value={ticket.price}
-                                onChange={e => updateTicketType(idx, 'price', parseFloat(e.target.value))}
-                                required
-                            />
-                        </div>
-                        <div className="w-24 space-y-1">
-                            <input
-                                type="number"
-                                placeholder="Qty"
-                                min="1"
-                                className="w-full p-2 border border-gray-300 rounded text-sm"
-                                value={ticket.capacity}
-                                onChange={e => updateTicketType(idx, 'capacity', parseInt(e.target.value))}
-                                required
-                            />
-                        </div>
-                        {ticketTypes.length > 1 && (
-                            <button type="button" onClick={() => removeTicketType(idx)} className="p-2 text-gray-400 hover:text-red-500 mt-0.5">
-                                <Trash2 className="w-4 h-4" />
-                            </button>
-                        )}
-                    </div>
-                ))}
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700">
-              Core details & Notes for AI
-            </label>
-            <textarea
-              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none min-h-[100px]"
-              placeholder="Describe the main theme, key speakers, or vibe of the event..."
-              value={formData.notes}
-              onChange={e => setFormData({...formData, notes: e.target.value})}
+        {/* Steps Indicator */}
+        <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-full border border-slate-200 shadow-sm">
+          {[1, 2, 3].map(i => (
+            <div
+              key={i}
+              className={`w-3 h-3 rounded-full transition-all duration-500 ${step >= i ? 'bg-indigo-600 scale-125 shadow-lg shadow-indigo-500/30' : 'bg-slate-200'}`}
             />
-            <div className="flex justify-end">
-              <button
-                type="button"
-                onClick={handleGenerateAI}
-                disabled={isGenerating || !formData.title}
-                className={`
-                  flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all
-                  ${isGenerating ? 'bg-gray-100 text-gray-400' : 'bg-primary-50 text-primary-700 hover:bg-primary-100'}
-                `}
-              >
-                {isGenerating ? (
-                  <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    Generating content...
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="w-4 h-4" />
-                    Generate Description & Agenda
-                  </>
-                )}
-              </button>
-            </div>
-          </div>
+          ))}
+          <span className="ml-2 text-xs font-medium text-slate-500">Step {step} of 3</span>
+        </div>
+      </div>
 
-          {/* Preview Section */}
-          {generatedContent && (
-            <div className="space-y-6 pt-6 border-t border-gray-100 animate-fade-in">
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">AI Generated Description</label>
-                <div className="p-4 bg-gray-50 rounded-lg border border-gray-200 text-sm text-gray-700 leading-relaxed">
-                  {generatedContent.description}
-                </div>
-              </div>
+      <div className="glass rounded-2xl p-8 border border-slate-200">
+        <form onSubmit={handleSubmit}>
+          {/* Step 1: Basic Details */}
+          {step === 1 && (
+            <div className="space-y-6 animate-fade-in">
+              <h2 className="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2">
+                <Calendar className="w-5 h-5 text-primary-600" /> Event Details
+              </h2>
 
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">Suggested Agenda</label>
-                <div className="space-y-3">
-                  {generatedContent.agenda.map((item, idx) => (
-                    <div key={idx} className="flex gap-4 p-3 bg-white border border-gray-200 rounded-lg shadow-sm">
-                      <div className="text-sm font-bold text-primary-600 min-w-[80px]">{item.time}</div>
-                      <div>
-                        <h4 className="text-sm font-semibold text-gray-900">{item.title}</h4>
-                        <p className="text-xs text-gray-500 mt-0.5">Speaker: {item.speaker}</p>
-                      </div>
-                    </div>
-                  ))}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="col-span-2">
+                  <label className="block text-sm font-medium text-slate-600 mb-2">Event Title</label>
+                  <input
+                    type="text"
+                    required
+                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-primary-500 outline-none transition-all"
+                    placeholder="e.g., Future Tech Summit 2025"
+                    value={formData.title}
+                    onChange={e => updateField('title', e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') e.preventDefault();
+                    }}
+                  />
                 </div>
-              </div>
-              
-              <div className="space-y-2">
-                 <label className="text-sm font-medium text-gray-700">Suggested Tags</label>
-                 <div className="flex flex-wrap gap-2">
-                    {generatedContent.tags.map(tag => (
-                      <span key={tag} className="px-2 py-1 bg-secondary-50 text-secondary-700 rounded text-xs font-medium border border-secondary-100">
-                        {tag}
-                      </span>
-                    ))}
-                 </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-600 mb-2">Date & Time</label>
+                  <input
+                    type="datetime-local"
+                    required
+                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-primary-500 outline-none transition-all"
+                    value={formData.date}
+                    onChange={e => updateField('date', e.target.value)}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-600 mb-2">Location</label>
+                  <div className="relative">
+                    <MapPin className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
+                    <input
+                      type="text"
+                      required
+                      className="w-full bg-white border border-slate-200 rounded-xl pl-12 pr-4 py-3 text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-primary-500 outline-none transition-all"
+                      placeholder="Venue or Online Link"
+                      value={formData.location}
+                      onChange={e => updateField('location', e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                <div className="col-span-2">
+                  <label className="block text-sm font-medium text-slate-600 mb-2">Cover Image URL</label>
+                  <div className="relative">
+                    <ImageIcon className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
+                    <input
+                      type="url"
+                      className="w-full bg-white border border-slate-200 rounded-xl pl-12 pr-4 py-3 text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-primary-500 outline-none transition-all"
+                      placeholder="https://..."
+                      value={formData.imageUrl}
+                      onChange={e => updateField('imageUrl', e.target.value)}
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           )}
 
-          <div className="flex items-center justify-end gap-4 pt-6 border-t border-gray-100">
+          {/* Step 2: Content & AI */}
+          {step === 2 && (
+            <div className="space-y-6 animate-fade-in">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
+                  <Sparkles className="w-5 h-5 text-secondary-500" /> Content & AI Magic
+                </h2>
+                <button
+                  type="button"
+                  onClick={handleGenerateAI}
+                  disabled={isGenerating || !formData.title}
+                  className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg text-white font-bold shadow-lg shadow-purple-500/20 hover:shadow-purple-500/40 disabled:opacity-50 transition-all"
+                >
+                  {isGenerating ? <Sparkles className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+                  {isGenerating ? 'Designing...' : 'Auto-Generate with AI'}
+                </button>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-600 mb-2">Description</label>
+                <textarea
+                  rows={6}
+                  className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-primary-500 outline-none transition-all resize-none"
+                  placeholder="Tell us about the event..."
+                  value={formData.description}
+                  onChange={e => updateField('description', e.target.value)}
+                />
+                <p className="text-xs text-slate-500 mt-2">Tip: Use the AI button to expand a brief summary into a full description with agenda and tags.</p>
+              </div>
+
+              {formData.tags && formData.tags.length > 0 && (
+                <div>
+                  <label className="block text-sm font-medium text-slate-600 mb-2">Tags (AI Generated)</label>
+                  <div className="flex flex-wrap gap-2">
+                    {formData.tags.map((tag, i) => (
+                      <span key={i} className="px-3 py-1 bg-primary-50 text-primary-700 rounded-full text-xs font-medium border border-primary-200">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Step 3: Tickets & Review */}
+          {step === 3 && (
+            <div className="space-y-6 animate-fade-in">
+              <h2 className="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2">
+                <DollarSign className="w-5 h-5 text-teal-500" /> Tickets & Review
+              </h2>
+
+              <div className="space-y-4">
+                {tickets.map((ticket, index) => (
+                  <div key={ticket.id} className="glass p-4 rounded-xl border border-slate-200 flex flex-wrap gap-4 items-end bg-white/50">
+                    <div className="flex-1 min-w-[200px]">
+                      <label className="block text-xs text-slate-500 mb-1">Ticket Name</label>
+                      <input
+                        type="text"
+                        value={ticket.name}
+                        onChange={e => updateTicket(ticket.id, 'name', e.target.value)}
+                        className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-slate-900 text-sm"
+                      />
+                    </div>
+                    <div className="w-24">
+                      <label className="block text-xs text-slate-500 mb-1">Price ($)</label>
+                      <input
+                        type="number"
+                        value={ticket.price}
+                        onChange={e => updateTicket(ticket.id, 'price', parseFloat(e.target.value))}
+                        className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-slate-900 text-sm"
+                      />
+                    </div>
+                    <div className="w-24">
+                      <label className="block text-xs text-slate-500 mb-1">Capacity</label>
+                      <input
+                        type="number"
+                        value={ticket.capacity}
+                        onChange={e => updateTicket(ticket.id, 'capacity', parseInt(e.target.value))}
+                        className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-slate-900 text-sm"
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => removeTicket(ticket.id)}
+                      className="p-2 text-red-400 hover:bg-red-50 rounded-lg transition-colors"
+                    >
+                      <X className="w-5 h-5" />
+                    </button>
+                  </div>
+                ))}
+
+                <button
+                  type="button"
+                  onClick={addTicket}
+                  className="w-full py-3 border border-dashed border-slate-300 rounded-xl text-slate-500 hover:text-primary-600 hover:border-primary-400 transition-all flex items-center justify-center gap-2"
+                >
+                  <DollarSign className="w-4 h-4" /> Add Ticket Type
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Navigation Actions */}
+          <div className="flex justify-between pt-8 mt-8 border-t border-slate-200">
             <button
               type="button"
-              onClick={onCancel}
-              className="px-6 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-lg border border-gray-300 transition-colors"
+              onClick={step === 1 ? onCancel : () => setStep(s => s - 1)}
+              className="px-6 py-3 rounded-xl text-slate-500 hover:text-slate-800 font-medium transition-colors"
             >
-              Cancel
+              {step === 1 ? 'Cancel' : 'Back'}
             </button>
-            <button
-              type="submit"
-              className="flex items-center gap-2 px-6 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg shadow-sm shadow-primary-200 transition-all"
-            >
-              <Save className="w-4 h-4" />
-              Create Event
-            </button>
+
+            {step < 3 ? (
+              <button
+                type="button"
+                onClick={() => setStep(s => s + 1)}
+                className="flex items-center gap-2 px-8 py-3 bg-slate-900 text-white rounded-xl font-bold hover:bg-slate-800 transition-colors shadow-lg hover:shadow-slate-900/20"
+              >
+                Next Step <ChevronRight className="w-4 h-4" />
+              </button>
+            ) : (
+              <button
+                type="submit"
+                className="flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-primary-600 to-secondary-600 text-white rounded-xl font-bold hover:shadow-lg hover:shadow-primary-500/25 transition-all"
+              >
+                <CheckCircle className="w-4 h-4" /> Publish Event
+              </button>
+            )}
           </div>
         </form>
       </div>

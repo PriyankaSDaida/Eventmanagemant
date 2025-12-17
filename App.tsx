@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { 
+import {
   LayoutDashboard, Calendar as CalendarIcon, Plus, Settings, LogOut
 } from 'lucide-react';
 import { Navbar } from './components/Navbar';
+import { Layout } from './components/Layout';
 import { Footer } from './components/Footer';
 import { Dashboard } from './views/Dashboard';
 import { CreateEvent } from './views/CreateEvent';
@@ -60,8 +61,8 @@ const App: React.FC = () => {
 
   const handlePurchase = (eventId: string, ticketTypeId: string) => {
     if (!user) {
-        setView('LOGIN');
-        return;
+      setView('LOGIN');
+      return;
     }
     const updatedEvents = events.map(e => {
       if (e.id === eventId) {
@@ -81,10 +82,10 @@ const App: React.FC = () => {
 
   if (view === 'LOGIN' || view === 'SIGNUP') {
     return (
-      <Auth 
-        mode={view} 
-        onSuccess={handleLogin} 
-        onToggleMode={() => setView(view === 'LOGIN' ? 'SIGNUP' : 'LOGIN')} 
+      <Auth
+        mode={view}
+        onSuccess={handleLogin}
+        onToggleMode={() => setView(view === 'LOGIN' ? 'SIGNUP' : 'LOGIN')}
       />
     );
   }
@@ -93,15 +94,15 @@ const App: React.FC = () => {
     switch (view) {
       case 'HOME':
         return (
-            <Home 
-                featuredEvents={events} 
-                onNavigateEvents={() => setView('EVENTS')}
-                onEventClick={handleEventClick}
-            />
+          <Home
+            featuredEvents={events}
+            onNavigateEvents={() => setView('EVENTS')}
+            onEventClick={handleEventClick}
+          />
         );
       case 'DASHBOARD':
         return <Dashboard events={events.map(e => ({
-          ...e, 
+          ...e,
           registeredCount: e.ticketTypes.reduce((acc, t) => acc + t.sold, 0),
           price: Math.min(...e.ticketTypes.map(t => t.price)) || 0
         }))} />;
@@ -109,16 +110,16 @@ const App: React.FC = () => {
         return <CreateEvent onSave={handleCreateEvent} onCancel={() => setView('EVENTS')} />;
       case 'EVENT_DETAILS':
         const event = events.find(e => e.id === selectedEventId);
-        return event 
-          ? <EventDetails event={event} onBack={() => setView('EVENTS')} onPurchase={handlePurchase} /> 
+        return event
+          ? <EventDetails event={event} onBack={() => setView('EVENTS')} onPurchase={handlePurchase} />
           : <div>Event not found</div>;
       case 'EVENTS':
       default:
         return (
-          <EventsList 
-            events={events} 
-            onEventClick={handleEventClick} 
-            onCreateClick={() => user ? setView('CREATE_EVENT') : setView('LOGIN')} 
+          <EventsList
+            events={events}
+            onEventClick={handleEventClick}
+            onCreateClick={() => user ? setView('CREATE_EVENT') : setView('LOGIN')}
           />
         );
     }
@@ -131,8 +132,8 @@ const App: React.FC = () => {
     <button
       onClick={() => setView(viewName)}
       className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors
-        ${view === viewName 
-          ? 'bg-primary-50 text-primary-700' 
+        ${view === viewName
+          ? 'bg-primary-50 text-primary-700'
           : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
         }`}
     >
@@ -142,65 +143,20 @@ const App: React.FC = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* Layout with optional sidebar */}
-      <div className="flex flex-1">
-        {/* Sidebar - Only visible when logged in and in Dashboard/Management views */}
-        {showSidebar && (
-            <aside className={`
-                fixed inset-y-0 left-0 z-20 w-64 bg-white border-r border-gray-200 transform transition-transform duration-200 ease-in-out
-                md:translate-x-0 md:static
-                ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
-            `}>
-                <div className="h-16 flex items-center px-6 border-b border-gray-200">
-                    <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center mr-3">
-                        <CalendarIcon className="w-5 h-5 text-white" />
-                    </div>
-                    <span className="text-xl font-bold text-gray-900 font-heading">EventHorizon</span>
-                </div>
+    <Layout>
+      <Navbar
+        user={user}
+        onNavigate={setView}
+        onLogout={handleLogout}
+        currentView={view}
+      />
 
-                <div className="p-4 space-y-1 flex flex-col h-[calc(100vh-4rem)]">
-                    <div className="space-y-1">
-                        <NavItem viewName="DASHBOARD" icon={LayoutDashboard} label="Dashboard" />
-                        <NavItem viewName="EVENTS" icon={CalendarIcon} label="All Events" />
-                    </div>
+      <main className="flex-1 w-full mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 animate-float">
+        {renderContent()}
+      </main>
 
-                    <div className="mt-auto pt-4 border-t border-gray-100 space-y-1">
-                        <button className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900">
-                            <Settings className="w-5 h-5" />
-                            Settings
-                        </button>
-                    </div>
-                </div>
-            </aside>
-        )}
-
-        {/* Main Content Area */}
-        <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-            <Navbar 
-                user={user} 
-                onNavigate={setView} 
-                onLogout={handleLogout} 
-                currentView={view}
-            />
-            
-            <main className={`flex-1 overflow-y-auto ${showSidebar ? 'p-4 md:p-8' : ''} ${view === 'HOME' ? 'p-0' : 'p-4 md:p-8'}`}>
-                {renderContent()}
-            </main>
-            
-            {/* Footer only on Home and Event Listing for public */}
-            {!showSidebar && <Footer />}
-        </div>
-      </div>
-
-      {/* Mobile Overlay */}
-      {sidebarOpen && showSidebar && (
-        <div 
-          className="fixed inset-0 bg-gray-900/50 z-10 md:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
-    </div>
+      {!user && view === 'HOME' && <Footer />}
+    </Layout>
   );
 };
 

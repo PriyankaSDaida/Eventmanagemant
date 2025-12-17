@@ -34,6 +34,8 @@ export interface Event {
   status: EventStatus;
   tags: string[];
   agenda: AgendaItem[];
+  organizerId?: string;
+  registeredCount: number;
 }
 
 export interface User {
