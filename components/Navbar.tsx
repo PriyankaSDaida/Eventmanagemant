@@ -16,8 +16,8 @@ export const Navbar: React.FC<NavbarProps> = ({ user, onLogout, onNavigate, curr
   const getLinkClass = (viewName: string) => {
     const isActive = currentView === viewName;
     return `relative px-4 py-2 rounded-xl transition-all duration-300 flex items-center gap-2 group ${isActive
-        ? 'text-primary-600 bg-primary-50 font-semibold border border-primary-100'
-        : 'text-slate-500 hover:text-primary-600 hover:bg-slate-50'
+      ? 'text-primary-600 bg-primary-50 font-semibold border border-primary-100'
+      : 'text-slate-500 hover:text-primary-600 hover:bg-slate-50'
       }`;
   };
 
@@ -53,7 +53,7 @@ export const Navbar: React.FC<NavbarProps> = ({ user, onLogout, onNavigate, curr
             <>
               <div className="h-6 w-px bg-slate-200 mx-2"></div>
               <NavLink view="DASHBOARD" icon={LayoutDashboard} label="Dashboard" />
-              <NavLink view="CREATE" icon={PlusCircle} label="Host Event" />
+              <NavLink view="CREATE_EVENT" icon={PlusCircle} label="Host Event" />
             </>
           )}
         </div>
@@ -80,13 +80,13 @@ export const Navbar: React.FC<NavbarProps> = ({ user, onLogout, onNavigate, curr
           ) : (
             <div className="flex items-center gap-3">
               <button
-                onClick={() => onNavigate('AUTH')}
+                onClick={() => onNavigate('LOGIN')}
                 className="text-slate-600 hover:text-primary-600 font-medium px-4 py-2 transition-colors"
               >
                 Sign In
               </button>
               <button
-                onClick={() => onNavigate('AUTH')}
+                onClick={() => onNavigate('LOGIN')}
                 className="px-5 py-2.5 bg-slate-900 text-white rounded-xl font-medium hover:bg-slate-800 shadow-lg shadow-slate-200/50 transition-all hover:-translate-y-0.5"
               >
                 Get Started
@@ -109,7 +109,7 @@ export const Navbar: React.FC<NavbarProps> = ({ user, onLogout, onNavigate, curr
           {user && (
             <>
               <button onClick={() => { onNavigate('DASHBOARD'); setIsOpen(false); }} className="p-3 hover:bg-slate-50 rounded-xl text-left font-medium text-slate-700">Dashboard</button>
-              <button onClick={() => { onNavigate('CREATE'); setIsOpen(false); }} className="p-3 hover:bg-slate-50 rounded-xl text-left font-medium text-slate-700">Host Event</button>
+              <button onClick={() => { onNavigate('CREATE_EVENT'); setIsOpen(false); }} className="p-3 hover:bg-slate-50 rounded-xl text-left font-medium text-slate-700">Host Event</button>
             </>
           )}
           <div className="h-px bg-slate-200 my-2"></div>
@@ -118,7 +118,7 @@ export const Navbar: React.FC<NavbarProps> = ({ user, onLogout, onNavigate, curr
               <LogOut className="w-4 h-4" /> Sign Out
             </button>
           ) : (
-            <button onClick={() => { onNavigate('AUTH'); setIsOpen(false); }} className="p-3 bg-primary-600 text-white rounded-xl text-center font-bold shadow-lg">
+            <button onClick={() => { onNavigate('LOGIN'); setIsOpen(false); }} className="p-3 bg-primary-600 text-white rounded-xl text-center font-bold shadow-lg">
               Sign In
             </button>
           )}
